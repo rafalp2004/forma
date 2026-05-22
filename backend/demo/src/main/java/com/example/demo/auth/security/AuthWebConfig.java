@@ -1,6 +1,5 @@
-package com.example.demo.social.config;
+package com.example.demo.auth.security;
 
-import com.example.demo.auth.security.CurrentUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -10,12 +9,12 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class SocialWebConfig implements WebMvcConfigurer {
+public class AuthWebConfig implements WebMvcConfigurer {
 
-    private final CurrentUserArgumentResolver currentUserArgumentResolver;
+    private final CurrentUserArgumentResolver authCurrentUserArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(currentUserArgumentResolver);
+        resolvers.add(authCurrentUserArgumentResolver);
     }
 }
