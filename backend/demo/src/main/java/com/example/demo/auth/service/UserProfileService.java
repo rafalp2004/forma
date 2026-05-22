@@ -19,7 +19,7 @@ public class UserProfileService {
     public UserDetailsResponse getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return new UserDetailsResponse(user.getUsername(), user.getEmail(), user.getAge(), user.getHeight(), user.getWeight(), user.getGender(), user.getGoal(), user.getCreatedAt(), user.getUpdatedAt());
+        return new UserDetailsResponse(user.getUsername(), user.getEmail(), user.getAge(), user.getWeight(), user.getHeight(), user.getGender(), user.getGoal(), user.getCreatedAt(), user.getUpdatedAt());
     }
 
     @Transactional

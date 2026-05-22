@@ -2,7 +2,7 @@ package com.example.demo.social.controller;
 
 import com.example.demo.social.dto.FriendDto;
 import com.example.demo.social.dto.FriendRequestDto;
-import com.example.demo.social.security.CurrentUser;
+import com.example.demo.auth.security.CurrentUser;
 import com.example.demo.social.service.FriendshipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

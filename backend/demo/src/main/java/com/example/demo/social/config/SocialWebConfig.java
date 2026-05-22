@@ -1,6 +1,6 @@
 package com.example.demo.social.config;
 
-import com.example.demo.social.security.CurrentUserArgumentResolver;
+import com.example.demo.auth.security.CurrentUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

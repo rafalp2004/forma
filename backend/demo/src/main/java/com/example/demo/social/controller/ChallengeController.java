@@ -3,7 +3,7 @@ package com.example.demo.social.controller;
 import com.example.demo.social.dto.ChallengeCreateDto;
 import com.example.demo.social.dto.ChallengeDto;
 import com.example.demo.social.dto.LeaderboardEntryDto;
-import com.example.demo.social.security.CurrentUser;
+import com.example.demo.auth.security.CurrentUser;
 import com.example.demo.social.service.ChallengeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
