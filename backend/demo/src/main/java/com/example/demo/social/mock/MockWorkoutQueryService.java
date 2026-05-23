@@ -1,5 +1,6 @@
 package com.example.demo.social.mock;
 
+import com.example.demo.shared.dto.ExerciseDto;
 import com.example.demo.shared.dto.WorkoutSetDto;
 import com.example.demo.shared.dto.WorkoutSummaryDto;
 import com.example.demo.shared.services.WorkoutQueryService;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
 public class MockWorkoutQueryService implements WorkoutQueryService {
 
     @Override
@@ -37,5 +37,20 @@ public class MockWorkoutQueryService implements WorkoutQueryService {
                                 new WorkoutSetDto("ex_row", "Barbell Row", "back", 10, 70.0, day3.atTime(9, 10))
                         ))
         );
+    }
+
+    @Override
+    public List<ExerciseDto> getAllExercises() {
+        return List.of();
+    }
+
+    @Override
+    public ExerciseDto getExerciseById(String exerciseId) {
+        return null;
+    }
+
+    @Override
+    public List<ExerciseDto> searchExercises(String keyword) {
+        return List.of();
     }
 }
