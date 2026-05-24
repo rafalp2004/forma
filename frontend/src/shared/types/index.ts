@@ -82,6 +82,7 @@ export interface LeaderboardEntryDto {
 
 export interface ProductDto {
   id: number
+  externalId: string
   name: string
   kcalPer100g: number
   proteinPer100g: number
