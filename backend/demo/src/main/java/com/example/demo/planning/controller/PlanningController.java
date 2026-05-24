@@ -6,6 +6,7 @@ import com.example.demo.planning.dto.CalendarWorkoutResponse;
 import com.example.demo.planning.dto.StrengthProgressPointResponse;
 import com.example.demo.planning.dto.TrainingPlanRequest;
 import com.example.demo.planning.dto.TrainingPlanResponse;
+import com.example.demo.planning.dto.WeightEntryRequest;
 import com.example.demo.planning.dto.WeightProgressPointResponse;
 import com.example.demo.planning.service.PlanningService;
 import jakarta.validation.Valid;
@@ -68,6 +69,12 @@ public class PlanningController {
     @GetMapping("/api/stats/weight")
     public List<WeightProgressPointResponse> getWeightProgress(@RequestParam Long userId) {
         return planningService.getWeightProgress(userId);
+    }
+
+    @PostMapping("/api/stats/weight")
+    @ResponseStatus(HttpStatus.CREATED)
+    public WeightProgressPointResponse saveWeightEntry(@Valid @RequestBody WeightEntryRequest request) {
+        return planningService.saveWeightEntry(request);
     }
 
     @GetMapping("/api/calendar")
