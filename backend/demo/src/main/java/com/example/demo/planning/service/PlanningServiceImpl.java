@@ -72,18 +72,20 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     @Transactional(readOnly = true)
-    public TrainingPlanResponse getPlan(Long id) {
-        return trainingPlanRepository.findById(id)
+    public TrainingPlanResponse getPlan(Long userId, Long id) {
+        validateUserExists(userId);
+        return trainingPlanRepository.findByIdAndUserId(id, userId)
                 .map(trainingPlanMapper::toResponse)
                 .orElseThrow(() -> new TrainingPlanNotFoundException(id));
     }
 
     @Override
     @Transactional
-    public TrainingPlanResponse updatePlan(Long id, TrainingPlanRequest request) {
+    public TrainingPlanResponse updatePlan(Long userId, Long id, TrainingPlanRequest request) {
+        validateUserExists(userId);
         validateDateRange(request);
 
-        TrainingPlan plan = trainingPlanRepository.findById(id)
+        TrainingPlan plan = trainingPlanRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new TrainingPlanNotFoundException(id));
 
         trainingPlanMapper.updateEntity(plan, request);
@@ -94,8 +96,9 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     @Transactional
-    public void deletePlan(Long id) {
-        TrainingPlan plan = trainingPlanRepository.findById(id)
+    public void deletePlan(Long userId, Long id) {
+        validateUserExists(userId);
+        TrainingPlan plan = trainingPlanRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new TrainingPlanNotFoundException(id));
         trainingPlanRepository.delete(plan);
     }
@@ -148,12 +151,12 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     @Transactional
-    public WeightProgressPointResponse saveWeightEntry(WeightEntryRequest request) {
-        validateUserExists(request.userId());
+    public WeightProgressPointResponse saveWeightEntry(Long userId, WeightEntryRequest request) {
+        validateUserExists(userId);
 
-        WeightEntry entry = weightEntryRepository.findByUserIdAndDate(request.userId(), request.date())
+        WeightEntry entry = weightEntryRepository.findByUserIdAndDate(userId, request.date())
                 .orElseGet(() -> WeightEntry.builder()
-                        .userId(request.userId())
+                        .userId(userId)
                         .date(request.date())
                         .build());
 

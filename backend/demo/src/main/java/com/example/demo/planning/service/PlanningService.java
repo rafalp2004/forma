@@ -14,17 +14,17 @@ public interface PlanningService {
 
     TrainingPlanResponse createPlan(Long userId, TrainingPlanRequest request);
 
-    TrainingPlanResponse getPlan(Long id);
+    TrainingPlanResponse getPlan(Long userId, Long id);
 
-    TrainingPlanResponse updatePlan(Long id, TrainingPlanRequest request);
+    TrainingPlanResponse updatePlan(Long userId, Long id, TrainingPlanRequest request);
 
-    void deletePlan(Long id);
+    void deletePlan(Long userId, Long id);
 
     List<StrengthProgressPointResponse> getStrengthProgress(Long userId, String exerciseId);
 
     List<WeightProgressPointResponse> getWeightProgress(Long userId);
 
-    WeightProgressPointResponse saveWeightEntry(WeightEntryRequest request);
+    WeightProgressPointResponse saveWeightEntry(Long userId, WeightEntryRequest request);
 
     List<CalendarWorkoutResponse> getCalendar(Long userId, Integer month, Integer year);
 }

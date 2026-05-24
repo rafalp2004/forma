@@ -25,63 +25,67 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@RestController
+@RestController("/api")
 @RequiredArgsConstructor
 public class PlanningController {
 
     private final PlanningService planningService;
 
-    @GetMapping("/api/plans")
-    public List<TrainingPlanResponse> getPlans(@RequestParam Long userId) {
-        return planningService.getPlans(userId);
+    @GetMapping("/plans")
+    public List<TrainingPlanResponse> getPlans(@CurrentUser User currentUser) {
+        return planningService.getPlans(resolveCurrentUserId(currentUser));
     }
 
-    @PostMapping("/api/plans")
+    @PostMapping("/plans")
     @ResponseStatus(HttpStatus.CREATED)
     public TrainingPlanResponse createPlan(@CurrentUser User currentUser,
                                            @Valid @RequestBody TrainingPlanRequest request) {
         return planningService.createPlan(resolveCurrentUserId(currentUser), request);
     }
 
-    @GetMapping("/api/plans/{id}")
-    public TrainingPlanResponse getPlan(@PathVariable Long id) {
-        return planningService.getPlan(id);
+    @GetMapping("/plans/{id}")
+    public TrainingPlanResponse getPlan(@CurrentUser User currentUser,
+                                        @PathVariable Long id) {
+        return planningService.getPlan(resolveCurrentUserId(currentUser), id);
     }
 
     @PutMapping("/api/plans/{id}")
-    public TrainingPlanResponse updatePlan(@PathVariable Long id,
+    public TrainingPlanResponse updatePlan(@CurrentUser User currentUser,
+                                           @PathVariable Long id,
                                            @Valid @RequestBody TrainingPlanRequest request) {
-        return planningService.updatePlan(id, request);
+        return planningService.updatePlan(resolveCurrentUserId(currentUser), id, request);
     }
 
     @DeleteMapping("/api/plans/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePlan(@PathVariable Long id) {
-        planningService.deletePlan(id);
+    public void deletePlan(@CurrentUser User currentUser,
+                           @PathVariable Long id) {
+        planningService.deletePlan(resolveCurrentUserId(currentUser), id);
     }
 
     @GetMapping("/api/stats/progress")
-    public List<StrengthProgressPointResponse> getStrengthProgress(@RequestParam Long userId,
+    public List<StrengthProgressPointResponse> getStrengthProgress(@CurrentUser User currentUser,
                                                                    @RequestParam String exerciseId) {
-        return planningService.getStrengthProgress(userId, exerciseId);
+        return planningService.getStrengthProgress(resolveCurrentUserId(currentUser), exerciseId);
     }
 
     @GetMapping("/api/stats/weight")
-    public List<WeightProgressPointResponse> getWeightProgress(@RequestParam Long userId) {
-        return planningService.getWeightProgress(userId);
+    public List<WeightProgressPointResponse> getWeightProgress(@CurrentUser User currentUser) {
+        return planningService.getWeightProgress(resolveCurrentUserId(currentUser));
     }
 
     @PostMapping("/api/stats/weight")
     @ResponseStatus(HttpStatus.CREATED)
-    public WeightProgressPointResponse saveWeightEntry(@Valid @RequestBody WeightEntryRequest request) {
-        return planningService.saveWeightEntry(request);
+    public WeightProgressPointResponse saveWeightEntry(@CurrentUser User currentUser,
+                                                       @Valid @RequestBody WeightEntryRequest request) {
+        return planningService.saveWeightEntry(resolveCurrentUserId(currentUser), request);
     }
 
     @GetMapping("/api/calendar")
-    public List<CalendarWorkoutResponse> getCalendar(@RequestParam Long userId,
+    public List<CalendarWorkoutResponse> getCalendar(@CurrentUser User currentUser,
                                                      @RequestParam Integer month,
                                                      @RequestParam Integer year) {
-        return planningService.getCalendar(userId, month, year);
+        return planningService.getCalendar(resolveCurrentUserId(currentUser), month, year);
     }
 
     private Long resolveCurrentUserId(User currentUser) {
