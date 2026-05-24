@@ -19,7 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,15 @@ public class ChallengeService {
         challenge.setDescription(dto.description());
         challenge.setStartDate(dto.startDate());
         challenge.setEndDate(dto.endDate());
-        challenge.setMetric(ChallengeMetric.valueOf(dto.metric()));
+        try {
+            challenge.setMetric(ChallengeMetric.valueOf(dto.metric().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            String allowed = Arrays.stream(ChallengeMetric.values())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Nieprawidłowa metryka: '" + dto.metric() + "'. Dozwolone wartości: " + allowed);
+        }
         challenge.setStatus(ChallengeStatus.ACTIVE);
         challenge = challengeRepository.save(challenge);
 

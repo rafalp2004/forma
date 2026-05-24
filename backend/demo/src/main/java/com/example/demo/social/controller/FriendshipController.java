@@ -1,8 +1,9 @@
 package com.example.demo.social.controller;
 
+import com.example.demo.auth.entity.User;
+import com.example.demo.auth.security.CurrentUser;
 import com.example.demo.social.dto.FriendDto;
 import com.example.demo.social.dto.FriendRequestDto;
-import com.example.demo.auth.security.CurrentUser;
 import com.example.demo.social.service.FriendshipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +21,22 @@ public class FriendshipController {
 
     @PostMapping("/request")
     @ResponseStatus(HttpStatus.CREATED)
-    public FriendDto sendFriendRequest(@CurrentUser Long currentUserId,
+    public FriendDto sendFriendRequest(@CurrentUser User currentUser,
                                        @Valid @RequestBody FriendRequestDto dto) {
-        return friendshipService.sendFriendRequest(currentUserId, dto);
+        return friendshipService.sendFriendRequest(currentUser.getId(), dto);
     }
 
     @PostMapping("/accept/{id}")
-    public FriendDto acceptFriendRequest(@CurrentUser Long currentUserId,
+    public FriendDto acceptFriendRequest(@CurrentUser User currentUser,
                                          @PathVariable Long id) {
-        return friendshipService.acceptFriendRequest(id, currentUserId);
+        return friendshipService.acceptFriendRequest(id, currentUser.getId());
     }
 
     @PostMapping("/reject/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void rejectFriendRequest(@CurrentUser Long currentUserId,
+    public void rejectFriendRequest(@CurrentUser User currentUser,
                                     @PathVariable Long id) {
-        friendshipService.rejectFriendRequest(id, currentUserId);
+        friendshipService.rejectFriendRequest(id, currentUser.getId());
     }
 
     @GetMapping
@@ -44,7 +45,7 @@ public class FriendshipController {
     }
 
     @GetMapping("/pending")
-    public List<FriendDto> getPendingRequests(@CurrentUser Long currentUserId) {
-        return friendshipService.getPendingRequests(currentUserId);
+    public List<FriendDto> getPendingRequests(@CurrentUser User currentUser) {
+        return friendshipService.getPendingRequests(currentUser.getId());
     }
 }
