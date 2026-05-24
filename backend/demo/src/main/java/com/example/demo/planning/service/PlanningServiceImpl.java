@@ -5,9 +5,11 @@ import com.example.demo.planning.dto.PlanExerciseRequest;
 import com.example.demo.planning.dto.StrengthProgressPointResponse;
 import com.example.demo.planning.dto.TrainingPlanRequest;
 import com.example.demo.planning.dto.TrainingPlanResponse;
+import com.example.demo.planning.dto.WeightEntryRequest;
 import com.example.demo.planning.dto.WeightProgressPointResponse;
 import com.example.demo.planning.entity.PlanExercise;
 import com.example.demo.planning.entity.TrainingPlan;
+import com.example.demo.planning.entity.WeightEntry;
 import com.example.demo.planning.exception.TrainingPlanNotFoundException;
 import com.example.demo.planning.mapper.PlanExerciseMapper;
 import com.example.demo.planning.mapper.TrainingPlanMapper;
@@ -142,6 +144,22 @@ public class PlanningServiceImpl implements PlanningService {
                 .stream()
                 .map(weightEntryMapper::toProgressResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public WeightProgressPointResponse saveWeightEntry(WeightEntryRequest request) {
+        validateUserExists(request.userId());
+
+        WeightEntry entry = weightEntryRepository.findByUserIdAndDate(request.userId(), request.date())
+                .orElseGet(() -> WeightEntry.builder()
+                        .userId(request.userId())
+                        .date(request.date())
+                        .build());
+
+        entry.setWeightKg(request.weightKg());
+
+        return weightEntryMapper.toProgressResponse(weightEntryRepository.save(entry));
     }
 
     @Override
