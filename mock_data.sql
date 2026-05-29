@@ -9,17 +9,19 @@ SET session_replication_role = replica;
 -- ============================================================
 -- 1. USERS (10 użytkowników)
 -- ============================================================
+
+    -- HASŁO DO KONT TO: password123
 INSERT INTO users (username, email, password, weight, height, age, gender, goal, role, created_at, updated_at) VALUES
-('adam_kowalski',   'adam.kowalski@mail.com',   '$2a$10$dummyhash1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 82.5, 180.0, 28, 'MALE',   'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '90 days', NOW()),
-('kasia_nowak',     'kasia.nowak@mail.com',     '$2a$10$dummyhash2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 58.0, 165.0, 25, 'FEMALE', 'LOSE_WEIGHT',     'USER',  NOW() - INTERVAL '80 days', NOW()),
-('piotr_wisniewski','piotr.wisniewski@mail.com','$2a$10$dummyhash3aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 95.0, 185.0, 35, 'MALE',   'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '70 days', NOW()),
-('anna_lewandowska','anna.lewandowska@mail.com','$2a$10$dummyhash4aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 63.0, 170.0, 30, 'FEMALE', 'MAINTAIN_WEIGHT', 'USER',  NOW() - INTERVAL '60 days', NOW()),
-('marek_dabrowski', 'marek.dabrowski@mail.com', '$2a$10$dummyhash5aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 78.0, 178.0, 42, 'MALE',   'LOSE_WEIGHT',     'USER',  NOW() - INTERVAL '55 days', NOW()),
-('ola_wojcik',      'ola.wojcik@mail.com',      '$2a$10$dummyhash6aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 55.5, 162.0, 22, 'FEMALE', 'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '45 days', NOW()),
-('tomasz_kaminski', 'tomasz.kaminski@mail.com', '$2a$10$dummyhash7aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 88.0, 183.0, 38, 'MALE',   'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '40 days', NOW()),
-('marta_zielinska', 'marta.zielinska@mail.com', '$2a$10$dummyhash8aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 67.0, 168.0, 27, 'FEMALE', 'MAINTAIN_WEIGHT', 'USER',  NOW() - INTERVAL '30 days', NOW()),
-('lukasz_szymanski','lukasz.szymanski@mail.com','$2a$10$dummyhash9aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 75.0, 176.0, 31, 'MALE',   'LOSE_WEIGHT',     'USER',  NOW() - INTERVAL '20 days', NOW()),
-('admin_forma',     'admin@forma.app',          '$2a$10$dummyhashAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', NULL, NULL,  NULL, NULL,    NULL,              'ADMIN', NOW() - INTERVAL '100 days', NOW());
+('adam_kowalski',   'adam.kowalski@mail.com',   '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 82.5, 180.0, 28, 'MALE',   'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '90 days', NOW()),
+('kasia_nowak',     'kasia.nowak@mail.com',     '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 58.0, 165.0, 25, 'FEMALE', 'LOSE_WEIGHT',     'USER',  NOW() - INTERVAL '80 days', NOW()),
+('piotr_wisniewski','piotr.wisniewski@mail.com','$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 95.0, 185.0, 35, 'MALE',   'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '70 days', NOW()),
+('anna_lewandowska','anna.lewandowska@mail.com','$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 63.0, 170.0, 30, 'FEMALE', 'MAINTAIN_WEIGHT', 'USER',  NOW() - INTERVAL '60 days', NOW()),
+('marek_dabrowski', 'marek.dabrowski@mail.com', '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 78.0, 178.0, 42, 'MALE',   'LOSE_WEIGHT',     'USER',  NOW() - INTERVAL '55 days', NOW()),
+('ola_wojcik',      'ola.wojcik@mail.com',      '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 55.5, 162.0, 22, 'FEMALE', 'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '45 days', NOW()),
+('tomasz_kaminski', 'tomasz.kaminski@mail.com', '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 88.0, 183.0, 38, 'MALE',   'GAIN_WEIGHT',     'USER',  NOW() - INTERVAL '40 days', NOW()),
+('marta_zielinska', 'marta.zielinska@mail.com', '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 67.0, 168.0, 27, 'FEMALE', 'MAINTAIN_WEIGHT', 'USER',  NOW() - INTERVAL '30 days', NOW()),
+('lukasz_szymanski','lukasz.szymanski@mail.com','$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', 75.0, 176.0, 31, 'MALE',   'LOSE_WEIGHT',     'USER',  NOW() - INTERVAL '20 days', NOW()),
+('admin_forma',     'admin@forma.app',          '$2a$12$Q0l9yo3Gq79id.W6ashuOO6EctqssFg3C9csA5lsBpiSEckCFryQa', NULL, NULL,  NULL, NULL,    NULL,              'ADMIN', NOW() - INTERVAL '100 days', NOW());
 
 -- ============================================================
 -- 2. WEIGHT_ENTRIES (historia wagi – ~8 wpisów na usera)
