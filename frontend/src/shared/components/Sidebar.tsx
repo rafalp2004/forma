@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/auth.store'
 
 interface NavItem {
@@ -20,7 +20,13 @@ const navItems: NavItem[] = [
 ]
 
 export function Sidebar() {
+  const navigate = useNavigate()
   const { user, logout } = useAuthStore()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <aside className="flex h-screen w-sidebar flex-col bg-sidebar text-gray-100">
@@ -62,7 +68,7 @@ export function Sidebar() {
           <span className="flex-1 truncate">{user?.username ?? 'Profil'}</span>
         </NavLink>
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
         >
           <span className="text-base">↩</span>
