@@ -86,6 +86,7 @@ export function PlansPage() {
 
   useEffect(() => {
     void loadPlans()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

@@ -15,7 +15,11 @@ export function ProfilePage() {
   const [isEditingBiometrics, setIsEditingBiometrics] = useState(false)
   const [isEditingGoals, setIsEditingGoals] = useState(false)
   const [editBioForm, setEditBioForm] = useState({ age: 0, weight: 0, height: 0, gender: Gender.MALE })
-  const [editGoalForm, setEditGoalForm] = useState({ goal: UserGoal.MAINTAIN_WEIGHT })
+  const [editGoalForm, setEditGoalForm] = useState({ 
+    goal: UserGoal.MAINTAIN_WEIGHT,
+    targetWeight: 0,
+    sessionsPerWeek: 0
+  })
 
   const fetchProfile = async () => {
     try {
@@ -28,7 +32,9 @@ export function ProfilePage() {
         gender: data.gender || Gender.MALE
       })
       setEditGoalForm({
-        goal: data.goal || UserGoal.MAINTAIN_WEIGHT
+        goal: data.goal || UserGoal.MAINTAIN_WEIGHT,
+        targetWeight: data.targetWeight || 0,
+        sessionsPerWeek: data.sessionsPerWeek || 0
       })
     } catch (error) {
       console.error('Failed to fetch profile:', error)
@@ -138,10 +144,6 @@ export function ProfilePage() {
                   <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Treningów</div>
                 </div>
                 <div className="text-center md:text-left">
-                  <div className="text-2xl font-bold text-primary">12</div>
-                  <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Przejechanych</div>
-                </div>
-                <div className="text-center md:text-left">
                   <div className="text-2xl font-bold text-primary">{profile?.challengeCount ?? 0}</div>
                   <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Wyzwań</div>
                 </div>
@@ -248,13 +250,25 @@ export function ProfilePage() {
                       <select 
                         className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                         value={editGoalForm.goal}
-                        onChange={(e) => setEditGoalForm({ goal: e.target.value as UserGoal })}
+                        onChange={(e) => setEditGoalForm({ ...editGoalForm, goal: e.target.value as UserGoal })}
                       >
                         <option value={UserGoal.LOSE_WEIGHT}>Redukcja</option>
                         <option value={UserGoal.GAIN_WEIGHT}>Budowa masy mięśniowej</option>
                         <option value={UserGoal.MAINTAIN_WEIGHT}>Utrzymanie wagi</option>
                       </select>
                     </div>
+                    <Input 
+                      label="Waga docelowa (kg)" 
+                      type="number" 
+                      value={editGoalForm.targetWeight} 
+                      onChange={(e) => setEditGoalForm({...editGoalForm, targetWeight: parseFloat(e.target.value)})}
+                    />
+                    <Input 
+                      label="Sesje / tydzień" 
+                      type="number" 
+                      value={editGoalForm.sessionsPerWeek} 
+                      onChange={(e) => setEditGoalForm({...editGoalForm, sessionsPerWeek: parseInt(e.target.value)})}
+                    />
                     <div className="flex gap-2 pt-2">
                       <Button onClick={handleSaveGoals} className="flex-1">Zapisz</Button>
                       <Button variant="secondary" onClick={() => setIsEditingGoals(false)} className="flex-1">Anuluj</Button>
@@ -268,11 +282,11 @@ export function ProfilePage() {
                     </div>
                     <div>
                       <div className="text-gray-400 text-xs uppercase tracking-widest mb-1">Waga docelowa</div>
-                      <div className="font-bold text-gray-800">85 kg</div>
+                      <div className="font-bold text-gray-800">{profile?.targetWeight || '--'} kg</div>
                     </div>
                     <div>
                       <div className="text-gray-400 text-xs uppercase tracking-widest mb-1">Sesje / tydzień</div>
-                      <div className="font-bold text-gray-800">5 sesji</div>
+                      <div className="font-bold text-gray-800">{profile?.sessionsPerWeek || '--'} sesji</div>
                     </div>
                   </>
                 )}
@@ -308,16 +322,6 @@ export function ProfilePage() {
               <h3 className="font-bold text-gray-900">Ustawienia konta</h3>
             </div>
             <div className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-medium text-gray-800 text-sm">Powiadomienia</div>
-                  <div className="text-xs text-primary font-medium">Włączone</div>
-                </div>
-                <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
-                  <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
-                </div>
-              </div>
-
               <div className="space-y-1">
                 <div className="font-medium text-gray-800 text-sm">Widoczność profilu</div>
                 <div className="text-xs text-gray-400">Tylko znajomi</div>

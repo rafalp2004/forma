@@ -28,6 +28,8 @@ public class UserDetailsResponse {
     private Double height;
     private Gender gender;
     private UserGoal goal;
+    private Double targetWeight;
+    private Integer sessionsPerWeek;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long workoutCount;

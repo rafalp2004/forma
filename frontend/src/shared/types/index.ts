@@ -31,6 +31,8 @@ export interface UserDetailsResponse {
   height: number | null
   gender: Gender | null
   goal: UserGoal | null
+  targetWeight: number | null
+  sessionsPerWeek: number | null
   createdAt: string
   updatedAt: string
   workoutCount: number

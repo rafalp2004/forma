@@ -60,6 +60,8 @@ public class UserProfileService {
                 user.getHeight(),
                 user.getGender(),
                 user.getGoal(),
+                user.getTargetWeight(),
+                user.getSessionsPerWeek(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
                 workoutCount,
@@ -84,6 +86,8 @@ public class UserProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setGoal(update.goal());
+        user.setTargetWeight(update.targetWeight());
+        user.setSessionsPerWeek(update.sessionsPerWeek());
         userRepository.save(user);
     }
 }
