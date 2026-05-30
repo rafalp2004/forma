@@ -166,6 +166,8 @@ class AuthE2ETest extends BaseE2ETest {
                 result.getResponse().getContentAsString(), UserDetailsResponse.class);
         assertThat(response.getUsername()).isEqualTo(username);
         assertThat(response.getEmail()).isEqualTo(username + "@test.com");
+        assertThat(response.getWorkoutCount()).isZero();
+        assertThat(response.getChallengeCount()).isZero();
     }
 
     @Test
@@ -199,7 +201,7 @@ class AuthE2ETest extends BaseE2ETest {
         String username = uniqueUser("goal");
         String token = register(username);
 
-        var update = new GoalUpdate(UserGoal.GAIN_WEIGHT);
+        var update = new GoalUpdate(UserGoal.GAIN_WEIGHT, 85.0, 5);
         mockMvc.perform(put("/api/users/me/goals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + token)
@@ -214,6 +216,8 @@ class AuthE2ETest extends BaseE2ETest {
         UserDetailsResponse profile = objectMapper.readValue(
                 result.getResponse().getContentAsString(), UserDetailsResponse.class);
         assertThat(profile.getGoal()).isEqualTo(UserGoal.GAIN_WEIGHT);
+        assertThat(profile.getTargetWeight()).isEqualTo(85.0);
+        assertThat(profile.getSessionsPerWeek()).isEqualTo(5);
     }
 
     // ==================== WYSZUKIWANIE UŻYTKOWNIKÓW ====================

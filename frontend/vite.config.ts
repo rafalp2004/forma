@@ -12,7 +12,6 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:8080',
-      '/plans': 'http://localhost:8080',
     },
   },
 })

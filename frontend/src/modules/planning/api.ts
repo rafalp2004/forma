@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { apiClient } from '@/shared/api/client'
 import type {
   CalendarWorkoutResponse,
@@ -9,10 +8,6 @@ import type {
   WeightEntryRequest,
   WeightProgressPointResponse,
 } from './types'
-
-const legacyClient = axios.create({
-  headers: { 'Content-Type': 'application/json' },
-})
 
 function asArray<T>(data: unknown): T[] {
   if (Array.isArray(data)) {
@@ -42,38 +37,19 @@ function normalizePlan(plan: TrainingPlanResponse): TrainingPlanResponse {
   }
 }
 
-legacyClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('forma_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-legacyClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('forma_token')
-      window.location.href = '/login'
-    }
-    return Promise.reject(error)
-  }
-)
-
 export const planningApi = {
   async getPlans() {
-    const { data } = await legacyClient.get<unknown>('/plans')
+    const { data } = await apiClient.get<unknown>('/plans')
     return asArray<TrainingPlanResponse>(data).map(normalizePlan)
   },
 
   async createPlan(payload: TrainingPlanRequest) {
-    const { data } = await legacyClient.post<TrainingPlanResponse>('/plans', payload)
+    const { data } = await apiClient.post<TrainingPlanResponse>('/plans', payload)
     return normalizePlan(data)
   },
 
   async getPlan(id: number) {
-    const { data } = await legacyClient.get<TrainingPlanResponse>(`/plans/${id}`)
+    const { data } = await apiClient.get<TrainingPlanResponse>(`/plans/${id}`)
     return normalizePlan(data)
   },
 

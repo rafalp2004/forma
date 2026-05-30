@@ -1,5 +1,6 @@
 package com.example.demo.planning;
 
+import com.example.demo.auth.dto.UserDetailsResponse;
 import com.example.demo.BaseE2ETest;
 import com.example.demo.planning.dto.PlanExerciseRequest;
 import com.example.demo.planning.dto.TrainingPlanRequest;
@@ -21,11 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Testy E2E modułu planowania.
  *
- * Uwaga: PlanningController jest zdefiniowany jako @RestController("/api"),
- * gdzie "/api" to nazwa beana, NIE prefix URL. Faktyczne ścieżki to:
- *   POST   /plans              — tworzenie planu
- *   GET    /plans              — lista planów użytkownika
- *   GET    /plans/{id}         — pojedynczy plan
+ * Endpointy planowania:
+ *   POST   /api/plans          — tworzenie planu
+ *   GET    /api/plans          — lista planów użytkownika
+ *   GET    /api/plans/{id}     — pojedynczy plan
  *   PUT    /api/plans/{id}     — aktualizacja planu
  *   DELETE /api/plans/{id}     — usuwanie planu
  *   POST   /api/stats/weight   — zapis wagi
@@ -50,7 +50,7 @@ class PlanningE2ETest extends BaseE2ETest {
                 null
         );
 
-        MvcResult result = authPost("/plans", token, request, 201);
+        MvcResult result = authPost("/api/plans", token, request, 201);
         TrainingPlanResponse plan = objectMapper.readValue(
                 result.getResponse().getContentAsString(), TrainingPlanResponse.class);
 
@@ -76,7 +76,7 @@ class PlanningE2ETest extends BaseE2ETest {
                 List.of(exercise)
         );
 
-        MvcResult result = authPost("/plans", token, request, 201);
+        MvcResult result = authPost("/api/plans", token, request, 201);
         TrainingPlanResponse plan = objectMapper.readValue(
                 result.getResponse().getContentAsString(), TrainingPlanResponse.class);
 
@@ -89,12 +89,12 @@ class PlanningE2ETest extends BaseE2ETest {
         String username = uniqueUser("plan_get");
         String token = register(username);
 
-        MvcResult createResult = authPost("/plans", token,
+        MvcResult createResult = authPost("/api/plans", token,
                 new TrainingPlanRequest("Mój plan", null, null, null, null), 201);
         Long planId = objectMapper.readValue(
                 createResult.getResponse().getContentAsString(), TrainingPlanResponse.class).id();
 
-        MvcResult getResult = authGet("/plans/" + planId, token, 200);
+        MvcResult getResult = authGet("/api/plans/" + planId, token, 200);
         TrainingPlanResponse fetched = objectMapper.readValue(
                 getResult.getResponse().getContentAsString(), TrainingPlanResponse.class);
 
@@ -107,12 +107,12 @@ class PlanningE2ETest extends BaseE2ETest {
         String username = uniqueUser("plan_list");
         String token = register(username);
 
-        authPost("/plans", token,
+        authPost("/api/plans", token,
                 new TrainingPlanRequest("Plan A", null, null, null, null), 201);
-        authPost("/plans", token,
+        authPost("/api/plans", token,
                 new TrainingPlanRequest("Plan B", null, null, null, null), 201);
 
-        MvcResult result = authGet("/plans", token, 200);
+        MvcResult result = authGet("/api/plans", token, 200);
         List<TrainingPlanResponse> plans = objectMapper.readValue(
                 result.getResponse().getContentAsString(), new TypeReference<>() {});
 
@@ -126,7 +126,7 @@ class PlanningE2ETest extends BaseE2ETest {
         String username = uniqueUser("plan_upd");
         String token = register(username);
 
-        MvcResult createResult = authPost("/plans", token,
+        MvcResult createResult = authPost("/api/plans", token,
                 new TrainingPlanRequest("Stara nazwa", "Stary opis", null, null, null), 201);
         Long planId = objectMapper.readValue(
                 createResult.getResponse().getContentAsString(), TrainingPlanResponse.class).id();
@@ -145,7 +145,7 @@ class PlanningE2ETest extends BaseE2ETest {
         String username = uniqueUser("plan_del");
         String token = register(username);
 
-        MvcResult createResult = authPost("/plans", token,
+        MvcResult createResult = authPost("/api/plans", token,
                 new TrainingPlanRequest("Do usunięcia", null, null, null, null), 201);
         Long planId = objectMapper.readValue(
                 createResult.getResponse().getContentAsString(), TrainingPlanResponse.class).id();
@@ -154,7 +154,7 @@ class PlanningE2ETest extends BaseE2ETest {
         authDelete("/api/plans/" + planId, token, 204);
 
         // Po usunięciu GET powinno zwrócić 404
-        authGet("/plans/" + planId, token, 404);
+        authGet("/api/plans/" + planId, token, 404);
     }
 
     @Test
@@ -164,13 +164,13 @@ class PlanningE2ETest extends BaseE2ETest {
         String tokenA = register(userA);
         String tokenB = register(userB);
 
-        MvcResult createResult = authPost("/plans", tokenA,
+        MvcResult createResult = authPost("/api/plans", tokenA,
                 new TrainingPlanRequest("Prywatny plan A", null, null, null, null), 201);
         Long planId = objectMapper.readValue(
                 createResult.getResponse().getContentAsString(), TrainingPlanResponse.class).id();
 
         // Użytkownik B próbuje pobrać plan użytkownika A — 404
-        authGet("/plans/" + planId, tokenB, 404);
+        authGet("/api/plans/" + planId, tokenB, 404);
     }
 
     // ==================== WALIDACJA PLANÓW ====================
@@ -182,7 +182,7 @@ class PlanningE2ETest extends BaseE2ETest {
 
         // name jest @NotBlank — pusta string nie przejdzie
         var request = new TrainingPlanRequest("", null, null, null, null);
-        authPost("/plans", token, request, 400);
+        authPost("/api/plans", token, request, 400);
     }
 
     @Test
@@ -197,7 +197,7 @@ class PlanningE2ETest extends BaseE2ETest {
                 LocalDate.now(),               // endDate = dzisiaj — PRZED startDate
                 null
         );
-        authPost("/plans", token, request, 400);
+        authPost("/api/plans", token, request, 400);
     }
 
     // ==================== ŚLEDZENIE WAGI ====================
@@ -223,6 +223,21 @@ class PlanningE2ETest extends BaseE2ETest {
         assertThat(entries).isNotEmpty();
         assertThat(entries).extracting(WeightProgressPointResponse::date)
                 .contains(LocalDate.now());
+    }
+
+    @Test
+    void waga_dodanieWpisuAktualizujeProfilUzytkownika() throws Exception {
+        String username = uniqueUser("weight_profile");
+        String token = register(username);
+
+        authPost("/api/stats/weight", token,
+                new WeightEntryRequest(null, LocalDate.now(), new BigDecimal("82.4")), 201);
+
+        MvcResult profileResult = authGet("/api/users/me", token, 200);
+        UserDetailsResponse profile = objectMapper.readValue(
+                profileResult.getResponse().getContentAsString(), UserDetailsResponse.class);
+
+        assertThat(profile.getWeight()).isEqualTo(82.4);
     }
 
     @Test

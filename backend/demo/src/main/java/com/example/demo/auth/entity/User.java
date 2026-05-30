@@ -41,6 +41,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserGoal goal;
 
+    private Double targetWeight;
+    private Integer sessionsPerWeek;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
