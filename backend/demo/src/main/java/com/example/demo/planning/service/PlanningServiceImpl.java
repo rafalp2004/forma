@@ -1,5 +1,7 @@
 package com.example.demo.planning.service;
 
+import com.example.demo.auth.entity.User;
+import com.example.demo.auth.repository.UserRepository;
 import com.example.demo.planning.dto.CalendarWorkoutResponse;
 import com.example.demo.planning.dto.PlanExerciseRequest;
 import com.example.demo.planning.dto.StrengthProgressPointResponse;
@@ -47,6 +49,7 @@ public class PlanningServiceImpl implements PlanningService {
     private final WeightEntryMapper weightEntryMapper;
     private final WorkoutQueryService workoutQueryService;
     private final UserQueryService userQueryService;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -162,7 +165,10 @@ public class PlanningServiceImpl implements PlanningService {
 
         entry.setWeightKg(request.weightKg());
 
-        return weightEntryMapper.toProgressResponse(weightEntryRepository.save(entry));
+        WeightEntry saved = weightEntryRepository.save(entry);
+        updateProfileWeightFromLatestEntry(userId);
+
+        return weightEntryMapper.toProgressResponse(saved);
     }
 
     @Override
@@ -229,6 +235,22 @@ public class PlanningServiceImpl implements PlanningService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id is required");
         }
         userQueryService.findById(userId);
+    }
+
+    private void updateProfileWeightFromLatestEntry(Long userId) {
+        BigDecimal latestWeight = weightEntryRepository.findByUserIdOrderByDateAsc(userId)
+                .stream()
+                .reduce((previous, current) -> current)
+                .map(WeightEntry::getWeightKg)
+                .orElse(null);
+        if (latestWeight == null) {
+            return;
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        user.setWeight(latestWeight.doubleValue());
+        userRepository.save(user);
     }
 
     private List<WorkoutSummaryDto> getWorkoutHistory(Long userId, LocalDate from, LocalDate to) {
