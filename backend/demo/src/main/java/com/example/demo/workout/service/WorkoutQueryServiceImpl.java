@@ -9,6 +9,7 @@ import com.example.demo.workout.entity.WorkoutSession;
 import com.example.demo.workout.entity.WorkoutSet;
 import com.example.demo.workout.repository.ExerciseRepository;
 import com.example.demo.workout.repository.WorkoutSessionRepository;
+import com.example.demo.workout.repository.WorkoutSetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class WorkoutQueryServiceImpl implements WorkoutQueryService {
 
     private final ExerciseRepository exerciseRepository;
     private final WorkoutSessionRepository workoutSessionRepository;
+    private final WorkoutSetRepository workoutSetRepository;
 
     @Override
     public List<WorkoutSummaryDto> getHistory(Long userId, LocalDate from, LocalDate to) {
@@ -89,6 +91,41 @@ public class WorkoutQueryServiceImpl implements WorkoutQueryService {
                     setDtos
             );
         }).toList();
+    }
+
+    @Override
+    public Optional<WorkoutSummaryDto> getById(Long sessionId) {
+        return workoutSessionRepository.findById(sessionId).map(session -> {
+            List<WorkoutSet> sets = workoutSetRepository.findBySessionId(sessionId);
+
+            Set<String> neededExerciseIds = sets.stream()
+                    .map(WorkoutSet::getExerciseId)
+                    .collect(Collectors.toSet());
+
+            Map<String, Exercise> exerciseDictionary = exerciseRepository.findAllById(neededExerciseIds).stream()
+                    .collect(Collectors.toMap(Exercise::getId, ex -> ex));
+
+            List<WorkoutSetDto> setDtos = sets.stream().map(set -> {
+                Exercise exercise = exerciseDictionary.get(set.getExerciseId());
+                return new WorkoutSetDto(
+                        set.getExerciseId(),
+                        exercise != null ? exercise.getName() : "Nieznane cwiczenie",
+                        exercise != null ? exercise.getMuscleGroup() : "Nieznana partia",
+                        set.getReps() != null ? set.getReps() : 0,
+                        set.getWeight() != null ? set.getWeight() : 0.0,
+                        set.getPerformedAt()
+                );
+            }).toList();
+
+            return new WorkoutSummaryDto(
+                    session.getId(),
+                    session.getUserId(),
+                    session.getEndTime(),
+                    session.getTotalVolume() != null ? session.getTotalVolume() : 0.0,
+                    setDtos.size(),
+                    setDtos
+            );
+        });
     }
 
     @Override
