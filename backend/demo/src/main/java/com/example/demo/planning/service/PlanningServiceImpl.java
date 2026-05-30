@@ -218,7 +218,11 @@ public class PlanningServiceImpl implements PlanningService {
         return new CalendarWorkoutResponse(
                 workout.completedAt().toLocalDate(),
                 workout.id(),
-                workoutName
+                workoutName,
+                workout.completedAt(),
+                workout.totalVolumeKg(),
+                workout.totalSets(),
+                workout.sets() == null ? List.of() : workout.sets()
         );
     }
 

@@ -61,4 +61,17 @@ export interface CalendarWorkoutResponse {
   date: string
   workoutId: number
   workoutName: string
+  completedAt: string
+  totalVolumeKg: number
+  totalSets: number
+  sets: CalendarWorkoutSetResponse[]
+}
+
+export interface CalendarWorkoutSetResponse {
+  exerciseId: string
+  exerciseName: string
+  muscleGroup: string
+  reps: number
+  weightKg: number
+  performedAt: string
 }
