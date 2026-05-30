@@ -14,6 +14,34 @@ const legacyClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+function asArray<T>(data: unknown): T[] {
+  if (Array.isArray(data)) {
+    return data
+  }
+
+  if (data && typeof data === 'object') {
+    const wrapped = data as { content?: unknown; data?: unknown; plans?: unknown }
+    if (Array.isArray(wrapped.content)) {
+      return wrapped.content as T[]
+    }
+    if (Array.isArray(wrapped.data)) {
+      return wrapped.data as T[]
+    }
+    if (Array.isArray(wrapped.plans)) {
+      return wrapped.plans as T[]
+    }
+  }
+
+  return []
+}
+
+function normalizePlan(plan: TrainingPlanResponse): TrainingPlanResponse {
+  return {
+    ...plan,
+    exercises: Array.isArray(plan.exercises) ? plan.exercises : [],
+  }
+}
+
 legacyClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('forma_token')
   if (token) {
@@ -35,23 +63,23 @@ legacyClient.interceptors.response.use(
 
 export const planningApi = {
   async getPlans() {
-    const { data } = await legacyClient.get<TrainingPlanResponse[]>('/plans')
-    return data
+    const { data } = await legacyClient.get<unknown>('/plans')
+    return asArray<TrainingPlanResponse>(data).map(normalizePlan)
   },
 
   async createPlan(payload: TrainingPlanRequest) {
     const { data } = await legacyClient.post<TrainingPlanResponse>('/plans', payload)
-    return data
+    return normalizePlan(data)
   },
 
   async getPlan(id: number) {
     const { data } = await legacyClient.get<TrainingPlanResponse>(`/plans/${id}`)
-    return data
+    return normalizePlan(data)
   },
 
   async updatePlan(id: number, payload: TrainingPlanRequest) {
     const { data } = await apiClient.put<TrainingPlanResponse>(`/plans/${id}`, payload)
-    return data
+    return normalizePlan(data)
   },
 
   async deletePlan(id: number) {
