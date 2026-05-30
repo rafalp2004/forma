@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,7 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@RestController("/api")
+@RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PlanningController {
 
@@ -49,39 +51,39 @@ public class PlanningController {
         return planningService.getPlan(resolveCurrentUserId(currentUser), id);
     }
 
-    @PutMapping("/api/plans/{id}")
+    @PutMapping("/plans/{id}")
     public TrainingPlanResponse updatePlan(@CurrentUser User currentUser,
                                            @PathVariable Long id,
                                            @Valid @RequestBody TrainingPlanRequest request) {
         return planningService.updatePlan(resolveCurrentUserId(currentUser), id, request);
     }
 
-    @DeleteMapping("/api/plans/{id}")
+    @DeleteMapping("/plans/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePlan(@CurrentUser User currentUser,
                            @PathVariable Long id) {
         planningService.deletePlan(resolveCurrentUserId(currentUser), id);
     }
 
-    @GetMapping("/api/stats/progress")
+    @GetMapping("/stats/progress")
     public List<StrengthProgressPointResponse> getStrengthProgress(@CurrentUser User currentUser,
                                                                    @RequestParam String exerciseId) {
         return planningService.getStrengthProgress(resolveCurrentUserId(currentUser), exerciseId);
     }
 
-    @GetMapping("/api/stats/weight")
+    @GetMapping("/stats/weight")
     public List<WeightProgressPointResponse> getWeightProgress(@CurrentUser User currentUser) {
         return planningService.getWeightProgress(resolveCurrentUserId(currentUser));
     }
 
-    @PostMapping("/api/stats/weight")
+    @PostMapping("/stats/weight")
     @ResponseStatus(HttpStatus.CREATED)
     public WeightProgressPointResponse saveWeightEntry(@CurrentUser User currentUser,
                                                        @Valid @RequestBody WeightEntryRequest request) {
         return planningService.saveWeightEntry(resolveCurrentUserId(currentUser), request);
     }
 
-    @GetMapping("/api/calendar")
+    @GetMapping("/calendar")
     public List<CalendarWorkoutResponse> getCalendar(@CurrentUser User currentUser,
                                                      @RequestParam Integer month,
                                                      @RequestParam Integer year) {
