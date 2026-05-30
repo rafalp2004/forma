@@ -134,7 +134,7 @@ export function ProfilePage() {
               
               <div className="mt-8 flex gap-12 justify-center md:justify-start">
                 <div className="text-center md:text-left">
-                  <div className="text-2xl font-bold text-primary">247</div>
+                  <div className="text-2xl font-bold text-primary">{profile?.workoutCount ?? 0}</div>
                   <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Treningów</div>
                 </div>
                 <div className="text-center md:text-left">
@@ -142,7 +142,7 @@ export function ProfilePage() {
                   <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Przejechanych</div>
                 </div>
                 <div className="text-center md:text-left">
-                  <div className="text-2xl font-bold text-primary">3</div>
+                  <div className="text-2xl font-bold text-primary">{profile?.challengeCount ?? 0}</div>
                   <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Wyzwań</div>
                 </div>
               </div>
@@ -286,17 +286,17 @@ export function ProfilePage() {
               <h3 className="font-bold text-gray-900">Rekordy osobiste (PR)</h3>
             </div>
             <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {[
-                { name: 'Wyciskanie Sztangi', weight: '90 kg', date: '20.05.2026' },
-                { name: 'Martwy Ciąg', weight: '120 kg', date: '15.05.2026' },
-                { name: 'Przysiady', weight: '100 kg', date: '10.05.2026' },
-              ].map((record, i) => (
-                <div key={i} className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                  <div className="text-primary text-xl font-black mb-1">{record.weight}</div>
-                  <div className="text-gray-700 font-bold text-sm mb-1">{record.name}</div>
-                  <div className="text-gray-400 text-[10px]">{record.date}</div>
-                </div>
-              ))}
+              {profile?.personalRecords && profile.personalRecords.length > 0 ? (
+                profile.personalRecords.map((record, i) => (
+                  <div key={i} className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                    <div className="text-primary text-xl font-black mb-1">{record.weight} kg</div>
+                    <div className="text-gray-700 font-bold text-sm mb-1">{record.exerciseName}</div>
+                    <div className="text-gray-400 text-[10px]">{new Date(record.date).toLocaleDateString('pl-PL')}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="sm:col-span-3 text-center py-4 text-gray-400 text-sm">Brak rekordów do wyświetlenia</div>
+              )}
             </div>
           </Card>
         </div>

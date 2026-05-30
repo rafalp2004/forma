@@ -17,6 +17,12 @@ export interface UserDto {
   email: string
 }
 
+export interface PersonalRecordDto {
+  exerciseName: string
+  weight: number
+  date: string
+}
+
 export interface UserDetailsResponse {
   username: string
   email: string
@@ -27,6 +33,9 @@ export interface UserDetailsResponse {
   goal: UserGoal | null
   createdAt: string
   updatedAt: string
+  workoutCount: number
+  challengeCount: number
+  personalRecords: PersonalRecordDto[]
 }
 
 export interface LoginRequest {

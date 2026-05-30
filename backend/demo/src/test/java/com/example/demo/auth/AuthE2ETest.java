@@ -166,6 +166,8 @@ class AuthE2ETest extends BaseE2ETest {
                 result.getResponse().getContentAsString(), UserDetailsResponse.class);
         assertThat(response.getUsername()).isEqualTo(username);
         assertThat(response.getEmail()).isEqualTo(username + "@test.com");
+        assertThat(response.getWorkoutCount()).isZero();
+        assertThat(response.getChallengeCount()).isZero();
     }
 
     @Test
