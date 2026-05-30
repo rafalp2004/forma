@@ -14,13 +14,15 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// 401 → wyloguj i przekieruj na login
+// 401 → wyloguj i przekieruj na login (chyba że już tam jesteśmy)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('forma_token')
-      window.location.href = '/login'
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   }

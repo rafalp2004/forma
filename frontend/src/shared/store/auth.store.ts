@@ -5,7 +5,8 @@ import type { UserDto } from '../types'
 interface AuthState {
   user: UserDto | null
   token: string | null
-  setAuth: (user: UserDto, token: string) => void
+  setAuth: (token: string, user?: UserDto) => void
+  setUser: (user: UserDto) => void
   logout: () => void
   isAuthenticated: () => boolean
 }
@@ -16,10 +17,12 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
 
-      setAuth: (user, token) => {
+      setAuth: (token, user) => {
         localStorage.setItem('forma_token', token)
-        set({ user, token })
+        set({ token, ...(user ? { user } : {}) })
       },
+
+      setUser: (user) => set({ user }),
 
       logout: () => {
         localStorage.removeItem('forma_token')
