@@ -5,41 +5,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "activity_feed")
+@Table(name = "feed_comments")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ActivityFeed {
+public class FeedComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "feed_entry_id", nullable = false)
+    private Long feedEntryId;
+
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private FeedType type;
-
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
-    @Column(name = "challenge_id")
-    private Long challengeId;
-
-    @Column(name = "workout_session_id")
-    private Long workoutSessionId;
-
-    @Column(name = "challenge_title")
-    private String challengeTitle;
+    @Column(nullable = false, length = 500)
+    private String content;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, Long> {
 
+    @Query("SELECT ws FROM WorkoutSet ws WHERE ws.session.id = :sessionId")
+    List<WorkoutSet> findBySessionId(@Param("sessionId") Long sessionId);
     @Query(value = "SELECT ws.id, ws.session_id, ws.exercise_id, ws.reps, ws.weight, ws.performed_at " +
             "FROM workout_sets ws " +
             "JOIN workout_sessions s ON ws.session_id = s.id " +
