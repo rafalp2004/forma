@@ -32,6 +32,15 @@ public class ActivityFeed {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "challenge_id")
+    private Long challengeId;
+
+    @Column(name = "workout_session_id")
+    private Long workoutSessionId;
+
+    @Column(name = "challenge_title")
+    private String challengeTitle;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

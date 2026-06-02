@@ -1,9 +1,10 @@
 package com.example.demo.social.controller;
 
+import com.example.demo.auth.entity.User;
+import com.example.demo.auth.security.CurrentUser;
 import com.example.demo.social.dto.ChallengeCreateDto;
 import com.example.demo.social.dto.ChallengeDto;
 import com.example.demo.social.dto.LeaderboardEntryDto;
-import com.example.demo.auth.security.CurrentUser;
 import com.example.demo.social.service.ChallengeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,25 +22,31 @@ public class ChallengeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ChallengeDto createChallenge(@CurrentUser Long currentUserId,
+    public ChallengeDto createChallenge(@CurrentUser User currentUser,
                                         @Valid @RequestBody ChallengeCreateDto dto) {
-        return challengeService.createChallenge(currentUserId, dto);
+        return challengeService.createChallenge(currentUser.getId(), dto);
     }
 
     @PostMapping("/{id}/join")
-    public ChallengeDto joinChallenge(@CurrentUser Long currentUserId,
+    public ChallengeDto joinChallenge(@CurrentUser User currentUser,
                                       @PathVariable Long id) {
-        return challengeService.joinChallenge(id, currentUserId);
+        return challengeService.joinChallenge(id, currentUser.getId());
     }
 
     @GetMapping
-    public List<ChallengeDto> getActiveChallenges() {
-        return challengeService.getActiveChallenges();
+    public List<ChallengeDto> getActiveChallenges(@CurrentUser User currentUser) {
+        return challengeService.getActiveChallenges(currentUser.getId());
     }
 
     @GetMapping("/{id}")
-    public ChallengeDto getChallengeById(@PathVariable Long id) {
-        return challengeService.getChallengeById(id);
+    public ChallengeDto getChallengeById(@PathVariable Long id, @CurrentUser User currentUser) {
+        return challengeService.getChallengeById(id, currentUser.getId());
+    }
+
+    @DeleteMapping("/{id}/leave")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void leaveChallenge(@CurrentUser User currentUser, @PathVariable Long id) {
+        challengeService.leaveChallenge(id, currentUser.getId());
     }
 
     @GetMapping("/{id}/leaderboard")

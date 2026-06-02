@@ -19,7 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,14 +42,22 @@ public class ChallengeService {
         challenge.setDescription(dto.description());
         challenge.setStartDate(dto.startDate());
         challenge.setEndDate(dto.endDate());
-        challenge.setMetric(ChallengeMetric.valueOf(dto.metric()));
+        try {
+            challenge.setMetric(ChallengeMetric.valueOf(dto.metric().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            String allowed = Arrays.stream(ChallengeMetric.values())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Nieprawidłowa metryka: '" + dto.metric() + "'. Dozwolone wartości: " + allowed);
+        }
         challenge.setStatus(ChallengeStatus.ACTIVE);
         challenge = challengeRepository.save(challenge);
 
         addParticipant(challenge.getId(), creatorId);
-        createFeedEntry(creatorId, FeedType.CHALLENGE_CREATED, challenge.getStartDate(), challenge.getEndDate());
+        createFeedEntry(creatorId, FeedType.CHALLENGE_CREATED, challenge.getStartDate(), challenge.getEndDate(), challenge.getId(), challenge.getTitle());
 
-        return toDto(challenge);
+        return toDto(challenge, creatorId);
     }
 
     @Transactional
@@ -64,21 +74,31 @@ public class ChallengeService {
         });
 
         addParticipant(challengeId, userId);
-        createFeedEntry(userId, FeedType.CHALLENGE_JOINED, challenge.getStartDate(), challenge.getEndDate());
+        createFeedEntry(userId, FeedType.CHALLENGE_JOINED, challenge.getStartDate(), challenge.getEndDate(), challengeId, challenge.getTitle());
 
-        return toDto(challenge);
+        return toDto(challenge, userId);
     }
 
-    public List<ChallengeDto> getActiveChallenges() {
+    @Transactional
+    public void leaveChallenge(Long challengeId, Long userId) {
+        if (!challengeRepository.existsById(challengeId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge not found");
+        }
+        participantRepository.findByChallengeIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not participating in this challenge"));
+        participantRepository.deleteByChallengeIdAndUserId(challengeId, userId);
+    }
+
+    public List<ChallengeDto> getActiveChallenges(Long userId) {
         return challengeRepository.findByStatus(ChallengeStatus.ACTIVE)
                 .stream()
-                .map(this::toDto)
+                .map(c -> toDto(c, userId))
                 .toList();
     }
 
-    public ChallengeDto getChallengeById(Long id) {
+    public ChallengeDto getChallengeById(Long id, Long userId) {
         return challengeRepository.findById(id)
-                .map(this::toDto)
+                .map(c -> toDto(c, userId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge not found"));
     }
 
@@ -118,21 +138,25 @@ public class ChallengeService {
         participantRepository.saveAll(participants);
     }
 
-    private void createFeedEntry(Long userId, FeedType type, LocalDate startDate, LocalDate endDate) {
+    private void createFeedEntry(Long userId, FeedType type, LocalDate startDate, LocalDate endDate,
+                                  Long challengeId, String challengeTitle) {
         ActivityFeed feed = new ActivityFeed();
         feed.setUserId(userId);
         feed.setType(type);
         feed.setStartDate(startDate);
         feed.setEndDate(endDate);
+        feed.setChallengeId(challengeId);
+        feed.setChallengeTitle(challengeTitle);
         feedRepository.save(feed);
     }
 
-    private ChallengeDto toDto(Challenge c) {
+    private ChallengeDto toDto(Challenge c, Long userId) {
         int count = participantRepository.countByChallengeId(c.getId());
+        boolean isParticipant = participantRepository.findByChallengeIdAndUserId(c.getId(), userId).isPresent();
         return new ChallengeDto(
                 c.getId(), c.getCreatorId(), c.getTitle(), c.getDescription(),
                 c.getStatus().name(), c.getStartDate(), c.getEndDate(),
-                c.getMetric().name(), c.getCreatedAt(), count
+                c.getMetric().name(), c.getCreatedAt(), count, isParticipant
         );
     }
 }

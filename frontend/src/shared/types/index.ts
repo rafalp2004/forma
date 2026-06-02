@@ -1,13 +1,47 @@
 // ── Auth / User (właściciel: Arek) ──────────────────────────────────────────
 
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+}
+
+export enum UserGoal {
+  LOSE_WEIGHT = 'LOSE_WEIGHT',
+  GAIN_WEIGHT = 'GAIN_WEIGHT',
+  MAINTAIN_WEIGHT = 'MAINTAIN_WEIGHT',
+}
+
 export interface UserDto {
   id: number
   username: string
   email: string
 }
 
-export interface LoginRequest {
+export interface PersonalRecordDto {
+  exerciseName: string
+  weight: number
+  date: string
+}
+
+export interface UserDetailsResponse {
+  username: string
   email: string
+  age: number | null
+  weight: number | null
+  height: number | null
+  gender: Gender | null
+  goal: UserGoal | null
+  targetWeight: number | null
+  sessionsPerWeek: number | null
+  createdAt: string
+  updatedAt: string
+  workoutCount: number
+  challengeCount: number
+  personalRecords: PersonalRecordDto[]
+}
+
+export interface LoginRequest {
+  username: string
   password: string
 }
 
@@ -19,7 +53,6 @@ export interface RegisterRequest {
 
 export interface AuthResponse {
   token: string
-  user: UserDto
 }
 
 // ── Workout (właściciel: Mateusz) ────────────────────────────────────────────
