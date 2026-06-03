@@ -49,7 +49,7 @@ public class NutritionService {
         }
 
         int protein = (int) Math.round(weight * 2.0);
-        int fat = (int) Math.round(weight * 1.0);
+        int fat = (int) Math.round(weight);
         int carbs = (tdee - (protein * 4) - (fat * 9)) / 4;
 
         if (carbs < 0) carbs = 0;
