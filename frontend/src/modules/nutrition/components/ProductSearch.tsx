@@ -3,10 +3,17 @@ import { Button, Input, Card } from '@/shared/components';
 import { apiClient } from '@/shared/api/client';
 import { ProductDto } from '@/shared/types';
 
-export const ProductSearch = () => {
+interface ProductSearchProps {
+    onAddProduct?: (product: ProductDto, grams: number) => void;
+}
+
+export const ProductSearch = ({ onAddProduct }: ProductSearchProps) => {
     const [query, setQuery] = useState('');
     const [products, setProducts] = useState<ProductDto[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(null);
+    const [grams, setGrams] = useState<string>('100');
 
     const handleSearch = async () => {
         if (!query.trim()) return;
@@ -23,8 +30,23 @@ export const ProductSearch = () => {
         }
     };
 
+    const handleAddClick = (product: ProductDto) => {
+        setSelectedProduct(product);
+        setGrams('100'); // Domyślna porcja to 100g
+    };
+
+    const confirmAdd = () => {
+        if (onAddProduct && selectedProduct) {
+            onAddProduct(selectedProduct, Number(grams));
+        }
+        setSelectedProduct(null);
+        setQuery('');
+        setProducts([]);
+    };
+
+    // @ts-ignore
     return (
-        <Card className="h-full flex flex-col">
+        <Card className="h-full flex flex-col relative overflow-hidden">
             <h2 className="text-lg font-bold mb-4">Wyszukaj produkt</h2>
 
             <div className="relative mb-6">
@@ -72,6 +94,7 @@ export const ProductSearch = () => {
                         </div>
 
                         <Button
+                            onClick={() => handleAddClick(product)}
                             className="rounded-lg h-8 w-8 p-0 flex items-center justify-center bg-primary text-white shrink-0 hover:opacity-90 transition-opacity"
                         >
                             +
@@ -85,6 +108,38 @@ export const ProductSearch = () => {
                     </p>
                 )}
             </div>
+
+            {selectedProduct && (
+                <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6 border-t border-gray-100">
+                    <div className="text-4xl mb-4">⚖️</div>
+                    <h3 className="font-bold text-gray-800 text-lg mb-1 text-center line-clamp-2">
+                        {selectedProduct.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-6">Podaj wagę zjedzonej porcji</p>
+
+                    <div className="flex items-center gap-2 mb-6 w-full max-w-[200px]">
+                        <Input
+                            type="number"
+                            min="1"
+                            value={grams}
+                            onChange={(e) => setGrams(e.target.value)}
+                            className="text-center text-lg font-bold"
+                            autoFocus
+                            onKeyDown={(e) => e.key === 'Enter' && confirmAdd()}
+                        />
+                        <span className="text-gray-500 font-medium">gramów</span>
+                    </div>
+
+                    <div className="flex gap-3 w-full">
+                        <Button variant="outline" className="flex-1" onClick={() => setSelectedProduct(null)}>
+                            Anuluj
+                        </Button>
+                        <Button className="flex-1" onClick={confirmAdd}>
+                            Dodaj
+                        </Button>
+                    </div>
+                </div>
+            )}
         </Card>
     );
 };

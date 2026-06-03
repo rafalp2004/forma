@@ -1,27 +1,15 @@
-package com.example.demo.nutrition.model;
+package com.example.demo.nutrition.dto;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "diet_meals")
 @Data
-public class MealEntry {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MealEntryDto {
     private Long id;
-
-    private Long userId;
-
+    private LocalDate consumptionDate;
+    private String mealType;
     private String productName;
     private String externalProductId;
-
-    private LocalDate consumptionDate;
-
-    private String mealType;
-
     private float weightInGrams;
     private float calculatedCalories;
     private float calculatedProtein;

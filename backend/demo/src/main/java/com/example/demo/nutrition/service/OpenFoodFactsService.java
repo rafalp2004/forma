@@ -1,5 +1,6 @@
 package com.example.demo.nutrition.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,7 +22,8 @@ public class OpenFoodFactsService {
         String url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms={query}&search_simple=1&action=process&json=1&page_size=10&fields=code,product_name,nutriments";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "FormaNutritionApp/1.0 (Politechnika Wroclawska; 272511@student.pwr.edu.pl)");
+        headers.set("User-Agent", "FormaNutritionApp/1.0 (Projekt Zespolowy; repo: github.com/rafalp2004/forma)");
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
