@@ -5,8 +5,10 @@ import com.example.demo.workout.entity.WorkoutSession;
 import com.example.demo.workout.entity.WorkoutSet;
 import com.example.demo.workout.repository.WorkoutSessionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class WorkoutCommandService {
                 WorkoutSet set = new WorkoutSet();
                 set.setExerciseId(setDto.exerciseId());
                 set.setReps(setDto.reps());
-                set.setWeight(setDto.weight());
+                set.setWeight(parseWeight(setDto.weight()));
                 set.setPerformedAt(setDto.performedAt());
 
                 session.addSet(set);
@@ -44,5 +46,32 @@ public class WorkoutCommandService {
 
         session.setTotalVolume(calculatedVolume);
         workoutSessionRepository.save(session);
+    }
+
+    private double parseWeight(String value) {
+        if (value == null || value.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Podaj ciężar albo wpisz bw dla ćwiczenia z masą ciała"
+            );
+        }
+
+        String normalized = value.trim().toLowerCase();
+        if ("bw".equals(normalized)) {
+            return 0.0;
+        }
+
+        try {
+            double weight = Double.parseDouble(normalized.replace(',', '.'));
+            if (weight < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ciężar nie może być ujemny");
+            }
+            return weight;
+        } catch (NumberFormatException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Ciężar musi być liczbą albo wartością bw"
+            );
+        }
     }
 }

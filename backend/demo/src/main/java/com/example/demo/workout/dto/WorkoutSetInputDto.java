@@ -3,7 +3,6 @@ package com.example.demo.workout.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 public record WorkoutSetInputDto(
@@ -13,9 +12,13 @@ public record WorkoutSetInputDto(
         @Min(value = 1, message = "Musisz wykonać przynajmniej 1 powtórzenie")
         Integer reps,
 
-        @PositiveOrZero(message = "Ciężar nie może być ujemny")
-        Double weight,
+        @NotBlank(message = "Podaj ciężar albo wpisz bw dla ćwiczenia z masą ciała")
+        String weight,
 
         @NotNull(message = "Czas wykonania serii jest wymagany")
         LocalDateTime performedAt
-) {}
+) {
+        public WorkoutSetInputDto(String exerciseId, Integer reps, Double weight, LocalDateTime performedAt) {
+                this(exerciseId, reps, weight == null ? null : weight.toString(), performedAt);
+        }
+}

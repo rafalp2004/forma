@@ -52,6 +52,7 @@ export interface ExerciseDto {
   muscleGroup: string
   equipment: string
   gifUrl: string
+  instructions?: string
 }
 
 export interface WorkoutSetDto {
@@ -70,6 +71,20 @@ export interface WorkoutSummaryDto {
   totalVolumeKg: number
   totalSets: number
   sets: WorkoutSetDto[]
+}
+
+export interface WorkoutSetInputDto {
+  exerciseId: string
+  reps: number
+  weight: string
+  performedAt: string
+}
+
+export interface WorkoutSessionDto {
+  userId: number
+  startTime: string
+  endTime: string
+  sets: WorkoutSetInputDto[]
 }
 
 // ── Planning (właściciel: Antoni) ────────────────────────────────────────────
