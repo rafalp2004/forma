@@ -69,6 +69,19 @@ public class FriendshipService {
                 .toList();
     }
 
+    public void removeFriend(Long friendshipId, Long currentUserId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found"));
+
+        if (!friendship.getRequesterId().equals(currentUserId) && !friendship.getAddresseeId().equals(currentUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized");
+        }
+        if (friendship.getStatus() != FriendshipStatus.ACCEPTED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a friend");
+        }
+        friendshipRepository.delete(friendship);
+    }
+
     public List<FriendDto> getPendingRequests(Long currentUserId) {
         return friendshipRepository.findByAddresseeIdAndStatus(currentUserId, FriendshipStatus.PENDING)
                 .stream()

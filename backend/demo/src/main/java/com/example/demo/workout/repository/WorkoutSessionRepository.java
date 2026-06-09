@@ -21,4 +21,6 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay
     );
+
+    long countByUserId(Long userId);
 }

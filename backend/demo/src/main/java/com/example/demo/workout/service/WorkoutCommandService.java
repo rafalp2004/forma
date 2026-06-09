@@ -1,5 +1,8 @@
 package com.example.demo.workout.service;
 
+import com.example.demo.social.entity.ActivityFeed;
+import com.example.demo.social.entity.FeedType;
+import com.example.demo.social.repository.ActivityFeedRepository;
 import com.example.demo.workout.dto.WorkoutSessionDto;
 import com.example.demo.workout.entity.WorkoutSession;
 import com.example.demo.workout.entity.WorkoutSet;
@@ -17,6 +20,7 @@ import java.util.List;
 public class WorkoutCommandService {
 
     private final WorkoutSessionRepository workoutSessionRepository;
+    private final ActivityFeedRepository activityFeedRepository;
 
     @Transactional
     public void saveWorkoutSession(WorkoutSessionDto dto) {
@@ -45,7 +49,13 @@ public class WorkoutCommandService {
         }
 
         session.setTotalVolume(calculatedVolume);
-        workoutSessionRepository.save(session);
+        WorkoutSession saved = workoutSessionRepository.save(session);
+
+        ActivityFeed feed = new ActivityFeed();
+        feed.setUserId(dto.userId());
+        feed.setType(FeedType.WORKOUT_COMPLETED);
+        feed.setWorkoutSessionId(saved.getId());
+        activityFeedRepository.save(feed);
     }
 
     private double parseWeight(String value) {

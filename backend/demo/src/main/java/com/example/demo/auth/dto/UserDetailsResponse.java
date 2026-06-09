@@ -14,6 +14,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,6 +28,11 @@ public class UserDetailsResponse {
     private Double height;
     private Gender gender;
     private UserGoal goal;
+    private Double targetWeight;
+    private Integer sessionsPerWeek;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long workoutCount;
+    private Long challengeCount;
+    private List<PersonalRecordDto> personalRecords;
 }

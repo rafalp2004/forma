@@ -40,8 +40,14 @@ public class FriendshipController {
     }
 
     @GetMapping
-    public List<FriendDto> getFriends(@RequestParam Long userId) {
-        return friendshipService.getFriends(userId);
+    public List<FriendDto> getFriends(@CurrentUser User currentUser) {
+        return friendshipService.getFriends(currentUser.getId());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeFriend(@CurrentUser User currentUser, @PathVariable Long id) {
+        friendshipService.removeFriend(id, currentUser.getId());
     }
 
     @GetMapping("/pending")

@@ -1,7 +1,10 @@
 package com.example.demo.social.dto;
 
+import com.example.demo.shared.dto.WorkoutSummaryDto;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record FeedEntryDto(
         Long id,
@@ -10,5 +13,9 @@ public record FeedEntryDto(
         String type,
         LocalDate startDate,
         LocalDate endDate,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long challengeId,
+        String challengeTitle,
+        WorkoutSummaryDto workoutSummary,
+        List<FeedCommentDto> comments
 ) {}

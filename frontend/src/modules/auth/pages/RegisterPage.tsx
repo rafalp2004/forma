@@ -4,6 +4,7 @@ import { Button, Input } from '@/shared/components'
 import { useAuthStore } from '@/shared/store/auth.store'
 import { apiClient } from '@/shared/api/client'
 import type { AuthResponse, RegisterRequest, UserDetailsResponse } from '@/shared/types'
+import { AxiosError } from 'axios'
 
 export function RegisterPage() {
   const navigate = useNavigate()
@@ -48,20 +49,24 @@ export function RegisterPage() {
       })
 
       navigate('/dashboard')
-    } catch (err: any) {
-      const status = err.response?.status
-      const message = err.response?.data?.message
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const status = err.response?.status
+        const message = err.response?.data?.message as string | undefined
 
-      if (status === 409 || message?.includes('already taken')) {
-        if (message?.toLowerCase().includes('email')) {
-          setError('Ten adres e-mail jest już zajęty')
-        } else if (message?.toLowerCase().includes('username')) {
-          setError('Ta nazwa użytkownika jest już zajęta')
+        if (status === 409 || message?.includes('already taken')) {
+          if (message?.toLowerCase().includes('email')) {
+            setError('Ten adres e-mail jest już zajęty')
+          } else if (message?.toLowerCase().includes('username')) {
+            setError('Ta nazwa użytkownika jest już zajęta')
+          } else {
+            setError('Użytkownik o podanych danych już istnieje')
+          }
         } else {
-          setError('Użytkownik o podanych danych już istnieje')
+          setError('Rejestracja nie powiodła się. Spróbuj ponownie.')
         }
       } else {
-        setError('Rejestracja nie powiodła się. Spróbuj ponownie.')
+        setError('Wystąpił nieoczekiwany błąd')
       }
     } finally {
       setLoading(false)
