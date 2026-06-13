@@ -34,13 +34,19 @@ public class ChallengeController {
     }
 
     @GetMapping
-    public List<ChallengeDto> getActiveChallenges() {
-        return challengeService.getActiveChallenges();
+    public List<ChallengeDto> getActiveChallenges(@CurrentUser User currentUser) {
+        return challengeService.getActiveChallenges(currentUser.getId());
     }
 
     @GetMapping("/{id}")
-    public ChallengeDto getChallengeById(@PathVariable Long id) {
-        return challengeService.getChallengeById(id);
+    public ChallengeDto getChallengeById(@PathVariable Long id, @CurrentUser User currentUser) {
+        return challengeService.getChallengeById(id, currentUser.getId());
+    }
+
+    @DeleteMapping("/{id}/leave")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void leaveChallenge(@CurrentUser User currentUser, @PathVariable Long id) {
+        challengeService.leaveChallenge(id, currentUser.getId());
     }
 
     @GetMapping("/{id}/leaderboard")

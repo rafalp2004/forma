@@ -1,5 +1,7 @@
 package com.example.demo.social.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,5 +15,6 @@ public record ChallengeDto(
         LocalDate endDate,
         String metric,
         LocalDateTime createdAt,
-        Integer participantCount
+        Integer participantCount,
+        @JsonProperty("isParticipant") boolean isParticipant
 ) {}

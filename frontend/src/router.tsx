@@ -18,6 +18,7 @@ import { ChallengesPage } from '@/modules/social/pages/ChallengesPage'
 import { NutritionPage } from '@/modules/nutrition/pages/NutritionPage'
 import { ProfilePage } from '@/modules/profile/pages/ProfilePage'
 
+// eslint-disable-next-line react-refresh/only-export-components
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)()
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />

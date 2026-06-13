@@ -17,6 +17,12 @@ export interface UserDto {
   email: string
 }
 
+export interface PersonalRecordDto {
+  exerciseName: string
+  weight: number
+  date: string
+}
+
 export interface UserDetailsResponse {
   username: string
   email: string
@@ -25,8 +31,13 @@ export interface UserDetailsResponse {
   height: number | null
   gender: Gender | null
   goal: UserGoal | null
+  targetWeight: number | null
+  sessionsPerWeek: number | null
   createdAt: string
   updatedAt: string
+  workoutCount: number
+  challengeCount: number
+  personalRecords: PersonalRecordDto[]
 }
 
 export interface LoginRequest {
@@ -52,6 +63,7 @@ export interface ExerciseDto {
   muscleGroup: string
   equipment: string
   gifUrl: string
+  instructions?: string
 }
 
 export interface WorkoutSetDto {
@@ -70,6 +82,20 @@ export interface WorkoutSummaryDto {
   totalVolumeKg: number
   totalSets: number
   sets: WorkoutSetDto[]
+}
+
+export interface WorkoutSetInputDto {
+  exerciseId: string
+  reps: number
+  weight: string
+  performedAt: string
+}
+
+export interface WorkoutSessionDto {
+  userId: number
+  startTime: string
+  endTime: string
+  sets: WorkoutSetInputDto[]
 }
 
 // ── Planning (właściciel: Antoni) ────────────────────────────────────────────

@@ -6,6 +6,13 @@
 -- Wyłącz triggery (żeby nie było problemów z kolejnością)
 SET session_replication_role = replica;
 
+-- Wyczyść tabele i zresetuj sekwencje
+TRUNCATE TABLE
+    feed_comments, activity_feed, challenge_participants, challenges,
+    friendships, workout_sets, workout_sessions, plan_exercises,
+    training_plans, weight_entries, users
+RESTART IDENTITY CASCADE;
+
 -- ============================================================
 -- 1. USERS (10 użytkowników)
 -- ============================================================
@@ -336,22 +343,52 @@ INSERT INTO challenge_participants (challenge_id, user_id, score, joined_at) VAL
 
 -- ============================================================
 -- 10. ACTIVITY_FEED
+-- Challenges: id 1=Wyzwanie Objetosci, 2=Seria 30 dni, 3=Streak King, 4=Zimowe, 5=Lato w Formie
+-- Sesje z seriami: adam(1-3,9,10), kasia(11,16,17), piotr(18,22), marek(23,27,28), tomasz(29,33), marta(34,36), lukasz(37-39)
 -- ============================================================
-INSERT INTO activity_feed (user_id, type, start_date, end_date, created_at) VALUES
-(1, 'CHALLENGE_CREATED', CURRENT_DATE - 28, CURRENT_DATE + 3,  NOW() - INTERVAL '30 days'),
-(3, 'CHALLENGE_CREATED', CURRENT_DATE - 15, CURRENT_DATE + 15, NOW() - INTERVAL '17 days'),
-(7, 'CHALLENGE_CREATED', CURRENT_DATE - 10, CURRENT_DATE + 20, NOW() - INTERVAL '12 days'),
-(1, 'CHALLENGE_JOINED',  CURRENT_DATE - 28, CURRENT_DATE + 3,  NOW() - INTERVAL '29 days'),
-(3, 'CHALLENGE_JOINED',  CURRENT_DATE - 28, CURRENT_DATE + 3,  NOW() - INTERVAL '28 days'),
-(7, 'CHALLENGE_JOINED',  CURRENT_DATE - 28, CURRENT_DATE + 3,  NOW() - INTERVAL '27 days'),
-(5, 'CHALLENGE_JOINED',  CURRENT_DATE - 28, CURRENT_DATE + 3,  NOW() - INTERVAL '26 days'),
-(3, 'CHALLENGE_JOINED',  CURRENT_DATE - 15, CURRENT_DATE + 15, NOW() - INTERVAL '15 days'),
-(1, 'CHALLENGE_JOINED',  CURRENT_DATE - 15, CURRENT_DATE + 15, NOW() - INTERVAL '14 days'),
-(2, 'CHALLENGE_CREATED', CURRENT_DATE - 5,  CURRENT_DATE + 55, NOW() - INTERVAL '7 days'),
-(2, 'CHALLENGE_JOINED',  CURRENT_DATE - 5,  CURRENT_DATE + 55, NOW() - INTERVAL '5 days'),
-(4, 'CHALLENGE_JOINED',  CURRENT_DATE - 5,  CURRENT_DATE + 55, NOW() - INTERVAL '4 days'),
-(8, 'CHALLENGE_JOINED',  CURRENT_DATE - 5,  CURRENT_DATE + 55, NOW() - INTERVAL '3 days'),
-(9, 'CHALLENGE_JOINED',  CURRENT_DATE - 5,  CURRENT_DATE + 55, NOW() - INTERVAL '2 days');
+INSERT INTO activity_feed (user_id, type, start_date, end_date, challenge_id, challenge_title, workout_session_id, created_at) VALUES
+-- Challenge created/joined
+(1, 'CHALLENGE_CREATED', CURRENT_DATE-28, CURRENT_DATE+3,  1, 'Wyzwanie Objetosci – Maj',  NULL, NOW()-INTERVAL '30 days'),
+(3, 'CHALLENGE_CREATED', CURRENT_DATE-15, CURRENT_DATE+15, 2, 'Seria Treningow – 30 dni',  NULL, NOW()-INTERVAL '17 days'),
+(7, 'CHALLENGE_CREATED', CURRENT_DATE-10, CURRENT_DATE+20, 3, 'Streak King',                NULL, NOW()-INTERVAL '12 days'),
+(2, 'CHALLENGE_CREATED', CURRENT_DATE-5,  CURRENT_DATE+55, 5, 'Lato w Formie',              NULL, NOW()-INTERVAL '7 days'),
+(1, 'CHALLENGE_JOINED',  CURRENT_DATE-28, CURRENT_DATE+3,  1, 'Wyzwanie Objetosci – Maj',  NULL, NOW()-INTERVAL '29 days'),
+(3, 'CHALLENGE_JOINED',  CURRENT_DATE-28, CURRENT_DATE+3,  1, 'Wyzwanie Objetosci – Maj',  NULL, NOW()-INTERVAL '28 days'),
+(7, 'CHALLENGE_JOINED',  CURRENT_DATE-28, CURRENT_DATE+3,  1, 'Wyzwanie Objetosci – Maj',  NULL, NOW()-INTERVAL '27 days'),
+(5, 'CHALLENGE_JOINED',  CURRENT_DATE-28, CURRENT_DATE+3,  1, 'Wyzwanie Objetosci – Maj',  NULL, NOW()-INTERVAL '26 days'),
+(3, 'CHALLENGE_JOINED',  CURRENT_DATE-15, CURRENT_DATE+15, 2, 'Seria Treningow – 30 dni',  NULL, NOW()-INTERVAL '15 days'),
+(1, 'CHALLENGE_JOINED',  CURRENT_DATE-15, CURRENT_DATE+15, 2, 'Seria Treningow – 30 dni',  NULL, NOW()-INTERVAL '14 days'),
+(2, 'CHALLENGE_JOINED',  CURRENT_DATE-5,  CURRENT_DATE+55, 5, 'Lato w Formie',              NULL, NOW()-INTERVAL '5 days'),
+(4, 'CHALLENGE_JOINED',  CURRENT_DATE-5,  CURRENT_DATE+55, 5, 'Lato w Formie',              NULL, NOW()-INTERVAL '4 days'),
+(8, 'CHALLENGE_JOINED',  CURRENT_DATE-5,  CURRENT_DATE+55, 5, 'Lato w Formie',              NULL, NOW()-INTERVAL '3 days'),
+(9, 'CHALLENGE_JOINED',  CURRENT_DATE-5,  CURRENT_DATE+55, 5, 'Lato w Formie',              NULL, NOW()-INTERVAL '2 days'),
+-- Workout completed – adam (sesje 1,2,3,9,10)
+(1, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 1,  NOW()-INTERVAL '55 days'),
+(1, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 2,  NOW()-INTERVAL '52 days'),
+(1, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 3,  NOW()-INTERVAL '49 days'),
+(1, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 9,  NOW()-INTERVAL '7 days'),
+(1, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 10, NOW()-INTERVAL '3 days'),
+-- Workout completed – kasia (sesje 11,16,17)
+(2, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 11, NOW()-INTERVAL '48 days'),
+(2, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 16, NOW()-INTERVAL '10 days'),
+(2, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 17, NOW()-INTERVAL '5 days'),
+-- Workout completed – piotr (sesje 18,22)
+(3, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 18, NOW()-INTERVAL '38 days'),
+(3, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 22, NOW()-INTERVAL '6 days'),
+-- Workout completed – marek (sesje 23,27,28)
+(5, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 23, NOW()-INTERVAL '43 days'),
+(5, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 27, NOW()-INTERVAL '8 days'),
+(5, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 28, NOW()-INTERVAL '4 days'),
+-- Workout completed – tomasz (sesje 29,33)
+(7, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 29, NOW()-INTERVAL '33 days'),
+(7, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 33, NOW()-INTERVAL '5 days'),
+-- Workout completed – marta (sesje 34,36)
+(8, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 34, NOW()-INTERVAL '28 days'),
+(8, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 36, NOW()-INTERVAL '9 days'),
+-- Workout completed – lukasz (sesje 37,38,39)
+(9, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 37, NOW()-INTERVAL '18 days'),
+(9, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 38, NOW()-INTERVAL '15 days'),
+(9, 'WORKOUT_COMPLETED', NULL, NULL, NULL, NULL, 39, NOW()-INTERVAL '2 days');
 
 -- Przywróć normalne triggery
 SET session_replication_role = DEFAULT;
@@ -366,4 +403,5 @@ UNION ALL SELECT 'workout_sets',          COUNT(*) FROM workout_sets
 UNION ALL SELECT 'friendships',           COUNT(*) FROM friendships
 UNION ALL SELECT 'challenges',            COUNT(*) FROM challenges
 UNION ALL SELECT 'challenge_participants',COUNT(*) FROM challenge_participants
-UNION ALL SELECT 'activity_feed',         COUNT(*) FROM activity_feed;
+UNION ALL SELECT 'activity_feed',         COUNT(*) FROM activity_feed
+UNION ALL SELECT 'feed_comments',         COUNT(*) FROM feed_comments;

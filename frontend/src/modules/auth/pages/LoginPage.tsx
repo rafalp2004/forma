@@ -1,11 +1,10 @@
-// @ts-ignore
 import { useState } from 'react'
-// @ts-ignore
 import { useNavigate, Link } from 'react-router-dom'
 import { Button, Input } from '@/shared/components'
 import { useAuthStore } from '@/shared/store/auth.store'
 import { apiClient } from '@/shared/api/client'
 import type { AuthResponse, LoginRequest, UserDetailsResponse } from '@/shared/types'
+import { AxiosError } from 'axios'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -43,15 +42,18 @@ export function LoginPage() {
       })
 
       navigate('/dashboard')
-    } catch (err: any) {
-      console.error('Login error detail:', err.response?.data || err.message)
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        console.error('Login error detail:', err.response?.data || err.message)
+      } else {
+        console.error('Login error:', err)
+      }
       setError('Nieprawidłowa nazwa użytkownika lub hasło')
     } finally {
       setLoading(false)
     }
   }
 
-  // @ts-ignore
   return (
     <div className="flex min-h-screen bg-white">
       {/* Left Pane - Branding */}
