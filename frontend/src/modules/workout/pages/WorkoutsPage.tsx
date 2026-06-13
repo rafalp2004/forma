@@ -291,7 +291,7 @@ export function WorkoutsPage() {
               Twoja przestrzen treningowa
             </p>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-gray-950 sm:text-5xl">
-              Adam Kowalski
+              Czas zadbać o formę.
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500">
               Zapisuj nowe sesje, wracaj do historii i obserwuj, jak rosnie Twoja regularnosc.
