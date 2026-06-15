@@ -99,11 +99,6 @@ export function LoginPage() {
                 required
                 className="h-12"
               />
-              <div className="flex justify-end">
-                <button type="button" className="text-sm text-primary hover:underline font-medium">
-                  Zapomniałeś hasła?
-                </button>
-              </div>
             </div>
 
             {error && (
