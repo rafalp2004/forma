@@ -30,11 +30,6 @@ public class UserDetailsResponse {
     private UserGoal goal;
     private Double targetWeight;
     private Integer sessionsPerWeek;
-    private Integer targetKcal;
-    private Integer targetProtein;
-    private Integer targetFat;
-    private Integer targetCarbs;
-    private Boolean useManualTargets;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long workoutCount;

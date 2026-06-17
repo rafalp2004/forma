@@ -44,12 +44,6 @@ public class User {
     private Double targetWeight;
     private Integer sessionsPerWeek;
 
-    private Integer targetKcal;
-    private Integer targetProtein;
-    private Integer targetFat;
-    private Integer targetCarbs;
-    private Boolean useManualTargets;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

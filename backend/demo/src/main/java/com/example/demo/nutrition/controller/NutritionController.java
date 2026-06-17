@@ -4,6 +4,8 @@ import com.example.demo.auth.entity.User;
 import com.example.demo.auth.repository.UserRepository;
 import com.example.demo.nutrition.dto.NutritionTargetsDto;
 import com.example.demo.nutrition.model.FoodProduct;
+import com.example.demo.nutrition.model.NutritionTarget;
+import com.example.demo.nutrition.repository.NutritionTargetRepository;
 import com.example.demo.nutrition.service.NutritionService;
 import com.example.demo.nutrition.service.OpenFoodFactsService;
 import com.example.demo.nutrition.repository.MealEntryRepository;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/nutrition")
@@ -28,6 +31,7 @@ public class NutritionController {
     private final NutritionService nutritionService;
     private final UserRepository userRepository;
     private final MealEntryRepository mealEntryRepository;
+    private final NutritionTargetRepository nutritionTargetRepository;
 
     @GetMapping("/meals")
     public ResponseEntity<List<MealEntryDto>> getMealsByDate(
@@ -136,14 +140,17 @@ public class NutritionController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
-        user.setTargetKcal(newTargets.getKcal());
-        user.setTargetProtein(newTargets.getProtein());
-        user.setTargetFat(newTargets.getFat());
-        user.setTargetCarbs(newTargets.getCarbs());
+        NutritionTarget target = nutritionTargetRepository.findByUserId(user.getId())
+                .orElse(new NutritionTarget());
 
-        user.setUseManualTargets(true);
+        target.setUserId(user.getId());
+        target.setTargetKcal(newTargets.getKcal());
+        target.setTargetProtein(newTargets.getProtein());
+        target.setTargetFat(newTargets.getFat());
+        target.setTargetCarbs(newTargets.getCarbs());
+        target.setUseManualTargets(true);
 
-        userRepository.save(user);
+        nutritionTargetRepository.save(target); // Zapisujemy w TWOJEJ encji
 
         return ResponseEntity.ok(newTargets);
     }
@@ -157,8 +164,12 @@ public class NutritionController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
-        user.setUseManualTargets(false);
-        userRepository.save(user);
+        Optional<NutritionTarget> targetOpt = nutritionTargetRepository.findByUserId(user.getId());
+        if (targetOpt.isPresent()) {
+            NutritionTarget target = targetOpt.get();
+            target.setUseManualTargets(false);
+            nutritionTargetRepository.save(target);
+        }
 
         NutritionTargetsDto recalculatedTargets = nutritionService.calculateDailyNeeds(user);
         return ResponseEntity.ok(recalculatedTargets);

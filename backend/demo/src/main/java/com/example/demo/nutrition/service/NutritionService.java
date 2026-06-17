@@ -2,18 +2,30 @@ package com.example.demo.nutrition.service;
 
 import com.example.demo.auth.entity.User;
 import com.example.demo.nutrition.dto.NutritionTargetsDto;
+import com.example.demo.nutrition.model.NutritionTarget;
+import com.example.demo.nutrition.repository.NutritionTargetRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
+@RequiredArgsConstructor
 public class NutritionService {
 
+    private final NutritionTargetRepository targetRepository;
+
     public NutritionTargetsDto calculateDailyNeeds(User user) {
-        if (user.getUseManualTargets() != null && user.getUseManualTargets()) {
+
+        Optional<NutritionTarget> optionalTarget = targetRepository.findByUserId(user.getId());
+
+        if (optionalTarget.isPresent() && Boolean.TRUE.equals(optionalTarget.get().getUseManualTargets())) {
+            NutritionTarget target = optionalTarget.get();
             return new NutritionTargetsDto(
-                    user.getTargetKcal(),
-                    user.getTargetProtein(),
-                    user.getTargetFat(),
-                    user.getTargetCarbs()
+                    target.getTargetKcal(),
+                    target.getTargetProtein(),
+                    target.getTargetFat(),
+                    target.getTargetCarbs()
             );
         }
 
