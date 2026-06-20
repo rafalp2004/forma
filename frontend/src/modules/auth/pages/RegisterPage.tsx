@@ -48,7 +48,7 @@ export function RegisterPage() {
         email: profile.email
       })
 
-      navigate('/dashboard')
+      navigate('/profile')
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const status = err.response?.status

@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ActivityFeedRepository extends JpaRepository<ActivityFeed, Long> {
 
-    @Query("SELECT af FROM ActivityFeed af WHERE af.userId IN :friendIds ORDER BY af.createdAt DESC")
-    List<ActivityFeed> findFeedForFriends(@Param("friendIds") List<Long> friendIds);
+    @Query("SELECT af FROM ActivityFeed af WHERE af.userId IN :userIds ORDER BY af.createdAt DESC")
+    List<ActivityFeed> findFeedForUsers(@Param("userIds") List<Long> userIds);
 }

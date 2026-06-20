@@ -8,7 +8,6 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',   to: '/dashboard',           icon: '⊞' },
   { label: 'Treningi',    to: '/workouts',             icon: '🏋' },
   { label: 'Ćwiczenia',  to: '/exercises',            icon: '📋' },
   { label: 'Plany',       to: '/plans',                icon: '📅' },

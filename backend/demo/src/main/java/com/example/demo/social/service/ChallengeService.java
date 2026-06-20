@@ -51,7 +51,7 @@ public class ChallengeService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Nieprawidłowa metryka: '" + dto.metric() + "'. Dozwolone wartości: " + allowed);
         }
-        challenge.setStatus(ChallengeStatus.ACTIVE);
+        challenge.setStatus(resolveStatus(dto.endDate()));
         challenge = challengeRepository.save(challenge);
 
         addParticipant(challenge.getId(), creatorId);
@@ -64,6 +64,7 @@ public class ChallengeService {
     public ChallengeDto joinChallenge(Long challengeId, Long userId) {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge not found"));
+        completeIfExpired(challenge);
 
         if (challenge.getStatus() != ChallengeStatus.ACTIVE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge is not active");
@@ -89,15 +90,20 @@ public class ChallengeService {
         participantRepository.deleteByChallengeIdAndUserId(challengeId, userId);
     }
 
+    @Transactional
     public List<ChallengeDto> getActiveChallenges(Long userId) {
         return challengeRepository.findByStatus(ChallengeStatus.ACTIVE)
                 .stream()
+                .peek(this::completeIfExpired)
+                .filter(c -> c.getStatus() == ChallengeStatus.ACTIVE)
                 .map(c -> toDto(c, userId))
                 .toList();
     }
 
+    @Transactional
     public ChallengeDto getChallengeById(Long id, Long userId) {
         return challengeRepository.findById(id)
+                .map(this::completeIfExpired)
                 .map(c -> toDto(c, userId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge not found"));
     }
@@ -106,6 +112,7 @@ public class ChallengeService {
     public List<LeaderboardEntryDto> getLeaderboard(Long challengeId) {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge not found"));
+        completeIfExpired(challenge);
 
         List<ChallengeParticipant> participants = participantRepository.findByChallengeIdOrderByScoreDesc(challengeId);
         refreshScores(challenge, participants);
@@ -136,6 +143,17 @@ public class ChallengeService {
             p.setScore(score);
         }
         participantRepository.saveAll(participants);
+    }
+
+    private ChallengeStatus resolveStatus(LocalDate endDate) {
+        return endDate.isBefore(LocalDate.now()) ? ChallengeStatus.COMPLETED : ChallengeStatus.ACTIVE;
+    }
+
+    private Challenge completeIfExpired(Challenge challenge) {
+        if (challenge.getStatus() == ChallengeStatus.ACTIVE && challenge.getEndDate().isBefore(LocalDate.now())) {
+            challenge.setStatus(ChallengeStatus.COMPLETED);
+        }
+        return challenge;
     }
 
     private void createFeedEntry(Long userId, FeedType type, LocalDate startDate, LocalDate endDate,

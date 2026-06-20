@@ -7,7 +7,6 @@ import { LoginPage } from '@/modules/auth/pages/LoginPage'
 import { RegisterPage } from '@/modules/auth/pages/RegisterPage'
 
 // App
-import { DashboardPage } from '@/modules/dashboard/pages/DashboardPage'
 import { WorkoutsPage } from '@/modules/workout/pages/WorkoutsPage'
 import { ExercisesPage } from '@/modules/workout/pages/ExercisesPage'
 import { PlansPage } from '@/modules/planning/pages/PlansPage'
@@ -37,8 +36,7 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: '/', element: <Navigate to="/dashboard" replace /> },
-      { path: '/dashboard', element: <DashboardPage /> },
+      { path: '/', element: <Navigate to="/profile" replace /> },
 
       // Mateusz
       { path: '/workouts', element: <WorkoutsPage /> },

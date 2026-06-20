@@ -11,14 +11,14 @@ const metricLabel: Record<string, string> = {
 
 const statusLabel: Record<string, string> = {
   ACTIVE: 'Aktywne',
-  FINISHED: 'Zakonczone',
-  PENDING: 'Oczekujace',
+  COMPLETED: 'Zakonczone',
+  CANCELLED: 'Anulowane',
 }
 
 const statusColor: Record<string, string> = {
   ACTIVE: 'bg-green-100 text-green-700',
-  FINISHED: 'bg-gray-100 text-gray-500',
-  PENDING: 'bg-yellow-100 text-yellow-700',
+  COMPLETED: 'bg-gray-100 text-gray-500',
+  CANCELLED: 'bg-red-100 text-red-600',
 }
 
 function formatDate(iso: string) {
