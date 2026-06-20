@@ -265,12 +265,7 @@ export function PlansPage() {
                       : 'border-gray-200 bg-white hover:bg-gray-50'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="truncate text-sm font-semibold text-gray-900">{plan.name}</span>
-                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                      {plan.status}
-                    </span>
-                  </div>
+                  <span className="block truncate text-sm font-semibold text-gray-900">{plan.name}</span>
                   <p className="mt-1 text-xs text-gray-500">
                     {plan.exercises.length} cwiczen
                     {plan.startDate ? ` od ${plan.startDate}` : ''}
@@ -289,11 +284,7 @@ export function PlansPage() {
               </div>
             ) : (
               <div className="space-y-5">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div className="rounded-lg border border-gray-200 p-4">
-                    <p className="text-xs font-semibold uppercase text-gray-400">Status</p>
-                    <p className="mt-1 text-sm font-semibold text-gray-900">{selectedPlan.status}</p>
-                  </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="rounded-lg border border-gray-200 p-4">
                     <p className="text-xs font-semibold uppercase text-gray-400">Start</p>
                     <p className="mt-1 text-sm font-semibold text-gray-900">{selectedPlan.startDate ?? '-'}</p>

@@ -14,6 +14,7 @@ import com.example.demo.social.repository.FriendshipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,11 +33,10 @@ public class FeedService {
                 .map(f -> f.getRequesterId().equals(userId) ? f.getAddresseeId() : f.getRequesterId())
                 .toList();
 
-        if (friendIds.isEmpty()) {
-            return List.of();
-        }
+        List<Long> visibleUserIds = new ArrayList<>(friendIds);
+        visibleUserIds.add(userId);
 
-        return feedRepository.findFeedForFriends(friendIds)
+        return feedRepository.findFeedForUsers(visibleUserIds)
                 .stream()
                 .map(af -> {
                     UserDto user = userQueryService.findById(af.getUserId());

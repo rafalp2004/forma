@@ -10,8 +10,13 @@ const feedConfig: Record<string, { icon: string; label: string; color: string; b
   CHALLENGE_CREATED: { icon: '➕',  label: 'utworzyl wyzwanie',    color: 'text-blue-700',    bg: 'bg-blue-50'    },
 }
 
+function parseApiTimestamp(value: string) {
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/.test(value)
+  return new Date(hasTimezone ? value : `${value}Z`)
+}
+
 function timeAgo(iso: string) {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
+  const diff = Math.max(0, Math.floor((Date.now() - parseApiTimestamp(iso).getTime()) / 1000))
   if (diff < 60) return 'przed chwila'
   if (diff < 3600) return `${Math.floor(diff / 60)} min temu`
   if (diff < 86400) return `${Math.floor(diff / 3600)} godz. temu`

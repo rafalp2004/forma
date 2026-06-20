@@ -41,7 +41,7 @@ export function LoginPage() {
         email: profile.email
       })
 
-      navigate('/dashboard')
+      navigate('/profile')
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         console.error('Login error detail:', err.response?.data || err.message)
@@ -136,7 +136,7 @@ export function LoginPage() {
                 onClick={() => {
                   setAuth('mock-token-dev')
                   setUser({ id: 1, username: 'rafal_dev', email: 'rafal@forma.dev' })
-                  navigate('/dashboard')
+                  navigate('/profile')
                 }}
               >
                 AUTO-LOGIN (DEV)
